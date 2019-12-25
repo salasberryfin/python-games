@@ -3,6 +3,9 @@ import random
 pygame.init()
 
 
+RED = 255, 0, 0
+GREEN = 0, 255, 0
+SPEED = 3
 HEIGHT = 640
 WIDTH = 420
 RATE = 60
@@ -40,10 +43,12 @@ class Board():
                            self.height)
 
     def food(self):
-        return pygame.Rect(random.randint(self.x_start, self.width),
-                           random.randint(self.y_start, self.height),
-                           12,
-                           12)
+        return pygame.Rect(random.randint(self.x_start + self.thickness,
+                                          self.width - self.thickness),
+                           random.randint(self.y_start + self.thickness,
+                                          self.height - self.thickness),
+                           10,
+                           10)
 
 class Player():
 
@@ -52,6 +57,9 @@ class Player():
         self.display = display
         self.width = width
         self.height = height
+        self.score = 0
+        self.speed = SPEED
+        self.mvt_mat = self.update_mvt_mat()
         head_x = display[0]/2
         head_y = display[1]/2
         self.parts = [self.PlayerPiece(head_x,
@@ -61,6 +69,17 @@ class Player():
     def grow(self, x, y):
         self.parts.append(self.PlayerPiece(x,
                                            y))
+
+    def accelerate(self):
+        self.speed += 0.2
+        self.mvt_mat = self.update_mvt_mat()
+
+    def update_mvt_mat(self):
+        return {pygame.K_LEFT:   [-self.speed, 0],
+                pygame.K_RIGHT:  [self.speed, 0],
+                pygame.K_DOWN:   [0, self.speed],
+                pygame.K_UP:     [0, -self.speed]}
+
 
     class PlayerPiece():
     
